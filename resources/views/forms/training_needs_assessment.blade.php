@@ -168,6 +168,16 @@
             font-size: 0.85rem;
             margin-bottom: 0.15rem;
         }
+        .field-error {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            font-family: Tahoma, sans-serif;
+        }
+        .error-highlight {
+            border-color: #dc2626 !important;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+        }
         @media (max-width: 768px) {
             body {
                 padding: 0.75rem 0.5rem 1.5rem;
@@ -255,61 +265,88 @@
 
             <div class="grid-4">
                 <div class="field">
-                    <label>Gender</label>
+                    <label>Gender *</label>
                     <div class="inline-options">
                         <label>
-                            <input type="radio" name="gender" value="female">
+                            <input type="radio" name="gender" value="Female" required>
                             Female
                         </label>
                         <label>
-                            <input type="radio" name="gender" value="male">
+                            <input type="radio" name="gender" value="Male" required>
                             Male
                         </label>
                     </div>
+                    @error('gender')
+                        <div class="field-error">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="field">
-                    <label for="age">Age</label>
-                    <input id="age" type="number" name="age" min="18" max="100">
+                    <label for="age">Age *</label>
+                    <input id="age" type="number" name="age" min="18" max="100" required>
+                    @error('age')
+                        <div class="field-error">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="field">
-                    <label for="first_name">First name</label>
-                    <input id="first_name" type="text" name="first_name">
+                    <label for="first_name">First name *</label>
+                    <input id="first_name" type="text" name="first_name" required>
+                    @error('first_name')
+                        <div class="field-error">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="field">
-                    <label for="middle_name">Middle name</label>
-                    <input id="middle_name" type="text" name="middle_name">
+                    <label for="middle_name">Middle name *</label>
+                    <input id="middle_name" type="text" name="middle_name" required>
+                    @error('middle_name')
+                        <div class="field-error">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
 
             <div class="grid-3" style="margin-top:0.75rem;">
                 <div class="field">
-                    <label for="surname">Surname</label>
-                    <input id="surname" type="text" name="surname">
+                    <label for="surname">Surname *</label>
+                    <input id="surname" type="text" name="surname" required>
+                    @error('surname')
+                        <div class="field-error">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="field">
-                    <label for="job_title">Job title / Position</label>
-                    <input id="job_title" type="text" name="job_title">
+                    <label for="job_title">Job title / Position *</label>
+                    <input id="job_title" type="text" name="job_title" required>
+                    @error('job_title')
+                        <div class="field-error">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="field">
-                    <label for="work_station">Work station</label>
-                    <input id="work_station" type="text" name="work_station">
+                    <label for="work_station">Work station *</label>
+                    <input id="work_station" type="text" name="work_station" required>
+                    @error('work_station')
+                        <div class="field-error">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
 
             <div class="field" style="margin-top:0.75rem;">
-                <label for="immediate_supervisor_name">Name of the immediate supervisor and title</label>
-                <input id="immediate_supervisor_name" type="text" name="immediate_supervisor_name">
+                <label for="immediate_supervisor_name">Name of the immediate supervisor and title *</label>
+                <input id="immediate_supervisor_name" type="text" name="immediate_supervisor_name" required>
+                @error('immediate_supervisor_name')
+                    <div class="field-error">{{ $message }}</div>
+                @enderror
             </div>
 
             <!-- 2.0 Academic and Professional Qualification -->
             <div class="section-heading">2.0 Academic and Professional Qualification</div>
-            <p class="note">Tick whichever is appropriate and indicate award and institution where applicable.</p>
+            <p class="note">Tick whichever is appropriate and indicate award and institution where applicable. * At least one qualification must be selected.</p>
+            @error('qualifications')
+                <div class="field-error" style="margin-bottom: 0.75rem;">{{ $message }}</div>
+            @enderror
 
             <table>
                 <thead>
                     <tr>
                         <th style="width: 45%;">Qualification</th>
-                        <th>Award and Institution</th>
+                        <th>Award and Institution *</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -328,12 +365,12 @@
                         <tr>
                             <td>
                                 <label>
-                                    <input type="checkbox" name="qualifications[{{ $key }}][selected]" value="1">
+                                    <input type="checkbox" name="qualifications[{{ $key }}][selected]" value="1" class="qualification-checkbox">
                                     {{ $label }}
                                 </label>
                             </td>
                             <td>
-                                <input type="text" name="qualifications[{{ $key }}][award]" placeholder="Award / Institution">
+                                <input type="text" name="qualifications[{{ $key }}][award]" placeholder="Award / Institution" class="qualification-award">
                             </td>
                         </tr>
                     @endforeach
@@ -580,12 +617,18 @@
 
             <div class="signature-row">
                 <div class="field">
-                    <label class="small-label" for="signature_name">Signature (name)</label>
-                    <input id="signature_name" type="text" name="signature_name">
+                    <label class="small-label" for="signature_name">Signature (name) *</label>
+                    <input id="signature_name" type="text" name="signature_name" required>
+                    @error('signature_name')
+                        <div class="field-error">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="field">
-                    <label class="small-label" for="signature_date">Date</label>
-                    <input id="signature_date" type="date" name="signature_date">
+                    <label class="small-label" for="signature_date">Date *</label>
+                    <input id="signature_date" type="date" name="signature_date" required>
+                    @error('signature_date')
+                        <div class="field-error">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
         </div>
@@ -607,6 +650,9 @@
                     placeholder="supervisor@example.com"
                     style="width: 100%; padding: 0.75rem; border: 2px solid #2563eb; border-radius: 6px; font-size: 0.95rem;"
                 >
+                @error('supervisor_email')
+                    <div class="field-error" style="margin-top: 0.5rem;">{{ $message }}</div>
+                @enderror
                 <p style="font-size: 0.85rem; color: #64748b; margin-top: 0.5rem;">
                     Your supervisor will receive an email with a secure link to view Part A and complete Part B.
                 </p>
@@ -621,27 +667,189 @@
     </form>
 
     <script>
-        // Ensure CSRF token is always fresh
+        // Form validation and CSRF token handling
         (function() {
-            // Update CSRF token before form submission
             const form = document.querySelector('form');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    // Refresh the CSRF token right before submission
-                    const tokenInput = form.querySelector('input[name="_token"]');
-                    if (tokenInput) {
-                        // Get fresh token from meta tag or regenerate
-                        const metaToken = document.querySelector('meta[name="csrf-token"]');
-                        if (metaToken) {
-                            tokenInput.value = metaToken.getAttribute('content');
+            if (!form) return;
+
+            // Get initial token from meta tag
+            const metaToken = document.querySelector('meta[name="csrf-token"]');
+            const tokenInput = form.querySelector('input[name="_token"]');
+            
+            if (metaToken && tokenInput) {
+                tokenInput.value = metaToken.getAttribute('content');
+            }
+
+            // Function to show error message
+            function showError(fieldName, message) {
+                let field, input;
+                
+                if (fieldName === 'gender') {
+                    const genderContainer = document.querySelector('.inline-options');
+                    if (genderContainer) {
+                        field = genderContainer.closest('.field');
+                    }
+                } else if (fieldName.startsWith('qualifications[')) {
+                    input = document.querySelector(`input[name="${fieldName}"]`);
+                    if (input) {
+                        field = input.closest('td') || input.closest('tr');
+                    }
+                } else {
+                    input = document.querySelector(`input[name="${fieldName}"], textarea[name="${fieldName}"]`);
+                    if (input) {
+                        field = input.closest('.field') || input.parentElement;
+                    }
+                }
+
+                if (field) {
+                    // Remove existing error
+                    const existingError = field.querySelector('.field-error');
+                    if (existingError) {
+                        existingError.remove();
+                    }
+
+                    // Add error class to input
+                    if (input) {
+                        input.classList.add('error-highlight');
+                    }
+
+                    // Create error message
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'field-error';
+                    errorDiv.textContent = message;
+                    
+                    if (input) {
+                        input.parentElement.appendChild(errorDiv);
+                    } else {
+                        field.appendChild(errorDiv);
+                    }
+                }
+            }
+
+            // Real-time validation for qualifications
+            document.querySelectorAll('.qualification-checkbox').forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    const nameAttr = this.getAttribute('name');
+                    const key = nameAttr.match(/qualifications\[([^\]]+)\]/)[1];
+                    const awardInput = document.querySelector(`input[name="qualifications[${key}][award]"]`);
+                    
+                    if (this.checked) {
+                        if (awardInput) {
+                            awardInput.setAttribute('required', 'required');
+                            awardInput.classList.remove('error-highlight');
+                            const error = awardInput.parentElement.querySelector('.field-error');
+                            if (error) error.remove();
+                        }
+                    } else {
+                        if (awardInput) {
+                            awardInput.removeAttribute('required');
+                            awardInput.classList.remove('error-highlight');
+                            const error = awardInput.parentElement.querySelector('.field-error');
+                            if (error) error.remove();
                         }
                     }
                 });
-            }
+            });
 
-            // If form is in an iframe, ensure cookies are accessible
+            // Form submission validation
+            form.addEventListener('submit', function(e) {
+                // Refresh CSRF token
+                if (metaToken && tokenInput) {
+                    tokenInput.value = metaToken.getAttribute('content');
+                }
+
+                // Clear previous errors
+                document.querySelectorAll('.field-error').forEach(el => el.remove());
+                document.querySelectorAll('.error-highlight').forEach(el => el.classList.remove('error-highlight'));
+
+                let isValid = true;
+
+                // Validate Gender
+                const gender = document.querySelector('input[name="gender"]:checked');
+                if (!gender) {
+                    showError('gender', 'Gender is required.');
+                    isValid = false;
+                }
+
+                // Validate Age
+                const age = document.querySelector('input[name="age"]');
+                if (!age || !age.value || age.value.trim() === '') {
+                    showError('age', 'Age is required.');
+                    isValid = false;
+                } else if (parseInt(age.value) < 18 || parseInt(age.value) > 100) {
+                    showError('age', 'Age must be between 18 and 100.');
+                    isValid = false;
+                }
+
+                // Validate required text fields
+                const requiredFields = [
+                    { name: 'first_name', label: 'First name' },
+                    { name: 'middle_name', label: 'Middle name' },
+                    { name: 'surname', label: 'Surname' },
+                    { name: 'job_title', label: 'Job title' },
+                    { name: 'work_station', label: 'Work station' },
+                    { name: 'immediate_supervisor_name', label: 'Immediate supervisor name' },
+                    { name: 'signature_name', label: 'Signature name' },
+                    { name: 'signature_date', label: 'Signature date' },
+                ];
+
+                requiredFields.forEach(function(field) {
+                    const input = document.querySelector(`input[name="${field.name}"]`);
+                    if (!input || !input.value || input.value.trim() === '') {
+                        showError(field.name, `${field.label} is required.`);
+                        isValid = false;
+                    }
+                });
+
+                // Validate Qualifications - At least one must be selected
+                const qualificationCheckboxes = document.querySelectorAll('.qualification-checkbox');
+                let hasSelectedQualification = false;
+                let qualificationErrors = [];
+
+                qualificationCheckboxes.forEach(function(checkbox) {
+                    if (checkbox.checked) {
+                        hasSelectedQualification = true;
+                        const nameAttr = checkbox.getAttribute('name');
+                        const key = nameAttr.match(/qualifications\[([^\]]+)\]/)[1];
+                        const awardInput = document.querySelector(`input[name="qualifications[${key}][award]"]`);
+                        
+                        if (!awardInput || !awardInput.value || awardInput.value.trim() === '' || awardInput.value.trim() === 'Award / Institution') {
+                            showError(`qualifications[${key}][award]`, 'Award and Institution is required for selected qualification.');
+                            isValid = false;
+                        }
+                    }
+                });
+
+                if (!hasSelectedQualification) {
+                    showError('qualifications', 'Please select at least one qualification.');
+                    isValid = false;
+                }
+
+                // Validate Supervisor Email
+                const supervisorEmail = document.querySelector('input[name="supervisor_email"]');
+                if (!supervisorEmail || !supervisorEmail.value || supervisorEmail.value.trim() === '') {
+                    showError('supervisor_email', 'Supervisor email is required.');
+                    isValid = false;
+                } else {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(supervisorEmail.value)) {
+                        showError('supervisor_email', 'Please enter a valid email address.');
+                        isValid = false;
+                    }
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                    const firstError = document.querySelector('.field-error');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    return false;
+                }
+            });
+
+            // If form is in an iframe
             if (window.self !== window.top) {
-                // We're in an iframe - ensure token is synced
                 console.log('Form loaded in iframe - CSRF token initialized');
             }
         })();

@@ -30,16 +30,17 @@ class TrainingNeedsAssessmentController extends Controller
      */
     public function storePartA(Request $request)
     {
+        // Basic validation
         $data = $request->validate([
-            // Personal information
-            'gender' => ['nullable', 'string', 'max:10'],
-            'age' => ['nullable', 'integer', 'min:18', 'max:100'],
-            'first_name' => ['nullable', 'string', 'max:100'],
-            'middle_name' => ['nullable', 'string', 'max:100'],
-            'surname' => ['nullable', 'string', 'max:100'],
-            'job_title' => ['nullable', 'string', 'max:150'],
-            'work_station' => ['nullable', 'string', 'max:150'],
-            'immediate_supervisor_name' => ['nullable', 'string', 'max:150'],
+            // Personal information - ALL REQUIRED
+            'gender' => ['required', 'string', 'in:Male,Female'],
+            'age' => ['required', 'integer', 'min:18', 'max:100'],
+            'first_name' => ['required', 'string', 'max:100'],
+            'middle_name' => ['required', 'string', 'max:100'],
+            'surname' => ['required', 'string', 'max:100'],
+            'job_title' => ['required', 'string', 'max:150'],
+            'work_station' => ['required', 'string', 'max:150'],
+            'immediate_supervisor_name' => ['required', 'string', 'max:150'],
             'supervisor_email' => ['required', 'email', 'max:255'],
 
             // Arrays / JSON fields
@@ -50,9 +51,36 @@ class TrainingNeedsAssessmentController extends Controller
             'training_methods' => ['nullable', 'array'],
 
             'other_comments' => ['nullable', 'string'],
-            'signature_name' => ['nullable', 'string', 'max:150'],
-            'signature_date' => ['nullable', 'date'],
+            'signature_name' => ['required', 'string', 'max:150'],
+            'signature_date' => ['required', 'date'],
         ]);
+
+        // Custom validation: At least one qualification must be selected
+        $qualifications = $request->input('qualifications', []);
+        $hasQualification = false;
+        $qualificationErrors = [];
+
+        foreach ($qualifications as $key => $qual) {
+            if (isset($qual['selected']) && $qual['selected'] == 1) {
+                $hasQualification = true;
+                // If qualification is selected, award must be filled
+                if (empty($qual['award']) || trim($qual['award']) === '') {
+                    $qualificationErrors[] = "Award and Institution is required for the selected qualification.";
+                }
+            }
+        }
+
+        if (!$hasQualification) {
+            return back()
+                ->withInput()
+                ->withErrors(['qualifications' => 'Please select at least one qualification.']);
+        }
+
+        if (!empty($qualificationErrors)) {
+            return back()
+                ->withInput()
+                ->withErrors(['qualifications' => implode(' ', $qualificationErrors)]);
+        }
 
         // Store Part A data
         $partAData = $data;
