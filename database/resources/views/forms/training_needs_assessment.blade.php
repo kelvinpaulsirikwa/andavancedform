@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>HESLB Training Needs Assessment – {{ config('advancedforms.appname', config('app.name')) }}</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/static_files/heslblogo.png') }}">
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }

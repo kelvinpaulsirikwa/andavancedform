@@ -1,31 +1,27 @@
-@extends('layouts.app')
+@auth
+    <script>
+        window.location.href = '{{ route("dashboard.questions") }}';
+    </script>
+@endauth
 
-@php
-    // Provide safe defaults so layout header doesn't error when rendering login
-    $activeTab = $activeTab ?? null;
-    $responsesCount = $responsesCount ?? 0;
-@endphp
-
-@section('title', 'Login | ' . config('advancedforms.appname', config('app.name')))
-
-@push('styles')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Login | {{ config('advancedforms.appname', config('app.name')) }}</title>
+    <link rel="icon" href="{{ asset('/images/static_files/logo.png') }}" type="image/png">
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-@endpush
-
-@auth
-    @push('scripts')
-    <script>
-        // Already authenticated, redirect straight to dashboard
-        window.location.href = '{{ route("dashboard.questions") }}';
-    </script>
-    @endpush
-@endauth
-
-@section('content')
+</head>
+<body>
     <div class="login-container">
+        <!-- Left Panel - Promotional Image -->
         <div class="promotional-panel">
             <div class="promotional-content">
                 <div class="promo-text-top">{{ config('advancedforms.appname', config('app.name')) }}</div>
@@ -39,8 +35,10 @@
             <div class="promotional-overlay"></div>
         </div>
 
+        <!-- Right Panel - Login Form -->
         <div class="login-form-panel">
             <div class="login-content">
+                <!-- Logo -->
                 <div class="logo-container">
                     <div class="logo-icon">
                         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -50,15 +48,18 @@
                     <span class="logo-text">{{ config('advancedforms.appname', config('app.name')) }}</span>
                 </div>
 
+                <!-- Welcome Message -->
                 <div class="welcome-section">
                     <h1 class="welcome-title">Welcome!</h1>
                     <p class="welcome-subtitle">{{ config('advancedforms.appname', config('app.name')) }} - Login to view responses</p>
                 </div>
 
+                <!-- Login Form -->
                 @guest
                 <form method="POST" action="{{ route('login.attempt') }}" class="login-form">
                     @csrf
                     
+                    <!-- Email Field -->
                     <div class="form-group">
                         <label for="email" class="form-label">Email</label>
                         <input 
@@ -76,6 +77,7 @@
                         @enderror
                     </div>
 
+                    <!-- Password Field -->
                     <div class="form-group">
                         <label for="password" class="form-label">Password</label>
                         <input 
@@ -91,6 +93,7 @@
                         @enderror
                     </div>
 
+                    <!-- Remember Me & Forgot Password -->
                     <div class="form-options">
                         <label class="checkbox-label">
                             <input type="checkbox" name="remember" id="remember" value="1">
@@ -99,6 +102,7 @@
                         <a href="#" class="forgot-password-link">Forgot Password</a>
                     </div>
 
+                    <!-- Sign In Button -->
                     <button type="submit" class="btn-signin">Sign In</button>
                 </form>
                 @else
@@ -109,28 +113,38 @@
             </div>
         </div>
     </div>
-@endsection
 
-@push('scripts')
-<script>
-    // Immediate redirect if page is loaded from cache and user might be authenticated
-    if (window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_BACK_FORWARD) {
-        window.location.href = window.location.href + (window.location.href.indexOf('?') > -1 ? '&' : '?') + '_t=' + new Date().getTime();
-    }
-
-    // Prevent back button from showing cached login page
-    window.addEventListener('pageshow', function(event) {
-        if (event.persisted) {
-            window.location.href = window.location.href.split('?')[0] + '?_t=' + new Date().getTime();
+    <script>
+        // Immediate redirect if page is loaded from cache and user might be authenticated
+        // Force a fresh check with the server
+        if (window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_BACK_FORWARD) {
+            // User pressed back button, force reload from server
+            window.location.href = window.location.href + (window.location.href.indexOf('?') > -1 ? '&' : '?') + '_t=' + new Date().getTime();
         }
-    });
 
-    if (window.history && window.history.pushState) {
-        window.history.pushState(null, null, window.location.href);
-        window.addEventListener('popstate', function() {
-            window.history.pushState(null, null, window.location.href);
-            window.location.href = window.location.href.split('?')[0] + '?_t=' + new Date().getTime();
+        // Prevent back button from showing cached login page
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                // Page was loaded from cache, reload from server with timestamp
+                window.location.href = window.location.href.split('?')[0] + '?_t=' + new Date().getTime();
+            }
         });
-    }
-</script>
-@endpush
+
+        // Prevent browser from caching this page
+        window.addEventListener('beforeunload', function() {
+            // Clear any potential cache
+        });
+
+        // Check if user is already authenticated (client-side check)
+        // This is a fallback - server-side check is primary
+        if (window.history && window.history.pushState) {
+            window.history.pushState(null, null, window.location.href);
+            window.addEventListener('popstate', function() {
+                window.history.pushState(null, null, window.location.href);
+                // Force reload with timestamp to bypass cache
+                window.location.href = window.location.href.split('?')[0] + '?_t=' + new Date().getTime();
+            });
+        }
+    </script>
+</body>
+</html>

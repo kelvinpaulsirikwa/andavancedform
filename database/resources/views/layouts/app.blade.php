@@ -7,8 +7,6 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>@yield('title', config('advancedforms.appname', config('app.name')))</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/static_files/heslblogo.png') }}">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -48,11 +46,6 @@
             display: flex;
             align-items: center;
             font-family: Tahoma, sans-serif;
-        }
-        .brand-logo {
-            height: 36px;
-            width: auto;
-            margin-right: 0.75rem;
         }
         .brand-content {
             display: flex;
@@ -141,66 +134,6 @@
         }
         .logout-form button:hover {
             background: #f1f5f9;
-        }
-        .logout-modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.45);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 1rem;
-        }
-        .logout-modal-overlay.active {
-            display: flex;
-        }
-        .logout-modal {
-            background: #ffffff;
-            border-radius: 10px;
-            padding: 1.25rem 1.5rem;
-            max-width: 420px;
-            width: 100%;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-            border: 1px solid #e2e8f0;
-        }
-        .logout-modal h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-            color: #0f172a;
-        }
-        .logout-modal p {
-            margin-bottom: 1rem;
-            color: #475569;
-            font-size: 0.95rem;
-        }
-        .logout-modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.75rem;
-        }
-        .logout-modal button {
-            border: none;
-            border-radius: 6px;
-            padding: 0.55rem 1rem;
-            font-size: 0.9rem;
-            cursor: pointer;
-            font-family: Tahoma, sans-serif;
-        }
-        .logout-cancel {
-            background: #f8fafc;
-            color: #475569;
-            border: 1px solid #e2e8f0;
-        }
-        .logout-cancel:hover {
-            background: #edf2f7;
-        }
-        .logout-confirm {
-            background: #2563eb;
-            color: #ffffff;
-        }
-        .logout-confirm:hover {
-            background: #1d4ed8;
         }
         .login-link {
             color: #2563eb;
@@ -344,7 +277,6 @@
 <body>
     <header>
         <div class="header-brand">
-            <img src="{{ asset('images/static_files/heslblogo.png') }}" alt="Logo" class="brand-logo">
             <div class="brand-content">
                 <span class="app-name">{{ config('advancedforms.appname', config('app.name')) }}</span>
                 <span class="app-subtitle">TNA</span>
@@ -375,15 +307,11 @@
                     {{ strtoupper(substr(auth()->user()->email ?? 'U', 0, 1)) }}
                 </div>
                 <span>{{ auth()->user()->email ?? 'User' }}</span>
-                <form method="POST" action="{{ route('logout') }}" class="logout-form" id="logoutForm">
+                <form method="POST" action="{{ route('logout') }}" class="logout-form">
                     @csrf
-                    <button type="button" class="logout-trigger" data-form-target="logoutForm">Logout</button>
+                    <button type="submit">Logout</button>
                 </form>
-
-                
             @else
-                <a href="{{ url('/') }}" class="login-link" style="margin-right: 0.75rem;">Home</a>
-                <a href="{{ route('training.form') }}" class="login-link" style="margin-right: 0.75rem;">Form</a>
                 <a href="{{ route('login') }}" class="login-link">Login</a>
             @endauth
         </div>
@@ -416,102 +344,71 @@
                     </div>
                     <span>{{ auth()->user()->email ?? 'User' }}</span>
                 </div>
-                <form method="POST" action="{{ route('logout') }}" class="logout-form" style="width: 100%;" id="logoutFormMobile">
+                <form method="POST" action="{{ route('logout') }}" class="logout-form" style="width: 100%;">
                     @csrf
-                    <button type="button" class="logout-trigger" data-form-target="logoutFormMobile" style="width: 100%;">Logout</button>
+                    <button type="submit" style="width: 100%;">Logout</button>
                 </form>
             </div>
         </div>
         @endauth
     </header>
 
-        <div id="logoutModal" class="logout-modal-overlay" aria-hidden="true">
-            <div class="logout-modal" role="dialog" aria-modal="true" aria-labelledby="logoutModalTitle">
-                <h3 id="logoutModalTitle">Confirm logout</h3>
-                <p>Are you sure you want to logout?</p>
-                <form id="logoutModalForm" method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <div class="logout-modal-actions">
-                        <button type="button" class="logout-cancel" id="logoutCancelBtn">Cancel</button>
-                        <button type="submit" class="logout-confirm" id="logoutConfirmBtn">Logout</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
         @yield('content')
 
+        @stack('scripts')
+        
+        <script>
+            function toggleMobileMenu() {
+                const menu = document.getElementById('mobileMenu');
+                const toggle = document.getElementById('mobileMenuToggle');
+                menu.classList.toggle('active');
+                toggle.classList.toggle('active');
+            }
+            
+            function closeMobileMenu() {
+                const menu = document.getElementById('mobileMenu');
+                const toggle = document.getElementById('mobileMenuToggle');
+                menu.classList.remove('active');
+                toggle.classList.remove('active');
+            }
+            
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(event) {
+                const menu = document.getElementById('mobileMenu');
+                const toggle = document.getElementById('mobileMenuToggle');
+                if (menu && toggle && !menu.contains(event.target) && !toggle.contains(event.target)) {
+                    menu.classList.remove('active');
+                    toggle.classList.remove('active');
+                }
+            });
+        </script>
+        
         @auth
-<script>
-    (function() {
-        const modal = document.getElementById('logoutModal');
-        const cancelBtn = document.getElementById('logoutCancelBtn');
-        const logoutForm = document.getElementById('logoutModalForm');
-
-        function openModal() {
-            if (modal) {
-                // ✅ Refresh CSRF token from meta tag
-                const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                const csrfInput = logoutForm.querySelector('input[name="_token"]');
-                if (csrfInput) {
-                    csrfInput.value = token;
-                } else {
-                    // Create token input if it doesn't exist
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = '_token';
-                    input.value = token;
-                    logoutForm.appendChild(input);
+        <script>
+            // Prevent back button navigation when logged in
+            history.pushState(null, null, location.href);
+            window.onpopstate = function(event) {
+                history.pushState(null, null, location.href);
+                // Redirect to dashboard if trying to go back
+                if (window.location.pathname === '/login' || window.location.pathname === '/') {
+                    window.location.href = '{{ route("dashboard.questions") }}';
                 }
-                
-                modal.classList.add('active');
-                modal.setAttribute('aria-hidden', 'false');
-            }
-        }
-
-        function closeModal() {
-            if (modal) {
-                modal.classList.remove('active');
-                modal.setAttribute('aria-hidden', 'true');
-            }
-        }
-
-        document.querySelectorAll('.logout-trigger').forEach(button => {
-            button.addEventListener('click', () => {
-                openModal();
-            });
-        });
-
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', closeModal);
-        }
-
-        if (modal) {
-            modal.addEventListener('click', (event) => {
-                if (event.target === modal) {
-                    closeModal();
+            };
+        </script>
+        @else
+        <script>
+            // Prevent back button navigation when logged out
+            history.pushState(null, null, location.href);
+            window.onpopstate = function(event) {
+                history.pushState(null, null, location.href);
+                // Redirect to login if trying to access protected pages
+                const protectedPaths = ['/dashboard', '/dashboard/questions', '/dashboard/responses', '/dashboard/report', '/dashboard/settings'];
+                if (protectedPaths.some(path => window.location.pathname.startsWith(path))) {
+                    window.location.href = '{{ route("login") }}';
                 }
-            });
-        }
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') {
-                closeModal();
-            }
-        });
-    })();
-
-    // Prevent back button navigation when logged in
-    history.pushState(null, null, location.href);
-    window.onpopstate = function(event) {
-        history.pushState(null, null, location.href);
-        // Redirect to dashboard if trying to go back
-        if (window.location.pathname === '/login' || window.location.pathname === '/') {
-            window.location.href = '{{ route("dashboard.questions") }}';
-        }
-    };
-</script>
-@endauth
+            };
+        </script>
+        @endauth
     </body>
     </html>
 

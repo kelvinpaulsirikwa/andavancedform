@@ -101,10 +101,6 @@
              border-color: #2563eb;
              box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);
          }
-        .response-item.unread {
-            border-left: 4px solid #2563eb;
-            background: #f0f9ff;
-        }
         .response-item-header {
             display: flex;
             justify-content: space-between;
@@ -375,7 +371,7 @@
                                 $isUnread = !$response->read_by || $response->read_by != auth()->id();
                             @endphp
                             <a href="{{ route('dashboard.response', $response->id) }}" style="text-decoration: none; color: inherit;">
-                                <div class="response-item {{ $isUnread ? 'unread' : '' }}" style="cursor: pointer; transition: all 0.2s;">
+                                <div class="response-item" style="cursor: pointer; transition: all 0.2s; {{ $isUnread ? 'border-left: 4px solid #2563eb; background: #f0f9ff;' : '' }}">
                                     <div class="response-item-header">
                                         <div class="response-name" style="display: flex; align-items: center; gap: 0.5rem;">
                                             {{ $response->first_name }} {{ $response->middle_name }} {{ $response->surname }}
@@ -469,46 +465,6 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Add User</button>
                 </form>
-            </div>
-
-            <!-- Admin Count -->
-            <div class="card">
-                <h2>Admin Users</h2>
-                <p style="margin-bottom: 0.75rem; color: #475569;">Total admin users in the system.</p>
-                <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 999px; padding: 0.5rem 1rem; font-weight: 700; font-size: 1.1rem;">
-                    {{ $adminCount ?? 0 }}
-                </div>
-            </div>
-
-            <!-- Admin Users Table -->
-            <div class="card">
-                <h2>Admin Users</h2>
-                @if(isset($adminUsers) && $adminUsers->count() > 0)
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse; font-family: Tahoma, sans-serif; font-size: 0.9rem;">
-                            <thead>
-                                <tr style="background: #f8fafc; color: #0f172a;">
-                                    <th style="text-align: left; padding: 0.65rem; border-bottom: 1px solid #e2e8f0;">Name</th>
-                                    <th style="text-align: left; padding: 0.65rem; border-bottom: 1px solid #e2e8f0;">Username</th>
-                                    <th style="text-align: left; padding: 0.65rem; border-bottom: 1px solid #e2e8f0;">Email</th>
-                                    <th style="text-align: left; padding: 0.65rem; border-bottom: 1px solid #e2e8f0;">Created</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($adminUsers as $admin)
-                                    <tr style="border-bottom: 1px solid #e2e8f0;">
-                                        <td style="padding: 0.6rem 0.65rem; color: #0f172a;">{{ $admin->name }}</td>
-                                        <td style="padding: 0.6rem 0.65rem; color: #475569;">{{ $admin->username }}</td>
-                                        <td style="padding: 0.6rem 0.65rem; color: #475569;">{{ $admin->email }}</td>
-                                        <td style="padding: 0.6rem 0.65rem; color: #475569;">{{ optional($admin->created_at)->format('M d, Y') }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @else
-                    <p style="color: #64748b;">No admin users found.</p>
-                @endif
             </div>
         </div>
     </main>

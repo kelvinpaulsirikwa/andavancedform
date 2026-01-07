@@ -18,7 +18,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/report', [DashboardController::class, 'report'])->name('dashboard.report');
     Route::get('/dashboard/report/export', [DashboardController::class, 'exportReport'])->name('dashboard.report.export');
     Route::get('/dashboard/settings', [DashboardController::class, 'settings'])->name('dashboard.settings');
-    Route::get('/dashboard/admins', [DashboardController::class, 'adminCountView'])->name('dashboard.admins');
     Route::get('/dashboard', function () {
         return redirect()->route('dashboard.questions');
     })->name('dashboard');
@@ -36,7 +35,6 @@ Route::middleware('auth')->group(function () {
     
     Route::post('/dashboard/change-password', [DashboardController::class, 'changePassword'])->name('dashboard.change-password');
     Route::post('/dashboard/add-user', [DashboardController::class, 'addUser'])->name('dashboard.add-user');
-    Route::get('/dashboard/admin-count', [DashboardController::class, 'adminCount'])->name('dashboard.admin-count');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 

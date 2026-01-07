@@ -16,9 +16,6 @@ class TrainingNeedsAssessmentController extends Controller
      */
     public function create()
     {
-        // Regenerate session to ensure fresh CSRF token
-        request()->session()->regenerateToken();
-        
         return response()->view('forms.training_needs_assessment')
             ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
             ->header('Pragma', 'no-cache')
