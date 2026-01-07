@@ -22,30 +22,33 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        View::composer('layouts.app', function ($view) {
-            $activeTab = 'questions';
-            $responsesCount = 0;
-            
-            if (Auth::check()) {
-                $responsesCount = TrainingNeedsAssessment::count();
+            View::composer('layouts.app', function ($view) {
+                $activeTab = 'questions';
+                $responsesCount = 0;
                 
-                // Determine active tab based on current route
-                $routeName = request()->route()->getName();
-                if (str_contains($routeName, 'questions')) {
-                    $activeTab = 'questions';
-                } elseif (str_contains($routeName, 'responses')) {
-                    $activeTab = 'responses';
-                } elseif (str_contains($routeName, 'report')) {
-                    $activeTab = 'report';
-                } elseif (str_contains($routeName, 'settings')) {
-                    $activeTab = 'settings';
+                if (Auth::check()) {
+                    // Only count responses that have both Part A and Part B completed
+                    $responsesCount = TrainingNeedsAssessment::where('part_a_submitted', true)
+                        ->where('part_b_submitted', true)
+                        ->count();
+                    
+                    // Determine active tab based on current route
+                    $routeName = request()->route()->getName();
+                    if (str_contains($routeName, 'questions')) {
+                        $activeTab = 'questions';
+                    } elseif (str_contains($routeName, 'responses')) {
+                        $activeTab = 'responses';
+                    } elseif (str_contains($routeName, 'report')) {
+                        $activeTab = 'report';
+                    } elseif (str_contains($routeName, 'settings')) {
+                        $activeTab = 'settings';
+                    }
                 }
-            }
-            
-            $view->with([
-                'activeTab' => $activeTab,
-                'responsesCount' => $responsesCount,
-            ]);
-        });
+                
+                $view->with([
+                    'activeTab' => $activeTab,
+                    'responsesCount' => $responsesCount,
+                ]);
+            });
     }
 }

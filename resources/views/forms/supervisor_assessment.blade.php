@@ -246,7 +246,16 @@
                     @foreach($assessment->qualifications as $key => $qual)
                         @if(isset($qual['selected']) && $qual['selected'] == 1)
                             <tr>
-                                <td>{{ $qualificationLabels[$key] ?? ucfirst(str_replace('_', ' ', $key)) }}</td>
+                                <td>
+                                    {{ $qualificationLabels[$key] ?? (str_starts_with($key, 'other_') ? 'Other (specify)' : ucfirst(str_replace('_', ' ', $key))) }}
+                                    @if($key === 'other' || str_starts_with($key, 'other_'))
+                                        @if(!empty($qual['specify']))
+                                            <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #64748b; font-style: italic;">
+                                                ({{ $qual['specify'] }})
+                                            </div>
+                                        @endif
+                                    @endif
+                                </td>
                                 <td>{{ $qual['award'] ?? 'N/A' }}</td>
                             </tr>
                         @endif

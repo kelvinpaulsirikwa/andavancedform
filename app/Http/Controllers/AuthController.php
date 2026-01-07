@@ -52,7 +52,10 @@ class AuthController extends Controller
 
     public function questions()
     {
-        $responsesCount = TrainingNeedsAssessment::count();
+        // Only count responses that have both Part A and Part B completed
+        $responsesCount = TrainingNeedsAssessment::where('part_a_submitted', true)
+            ->where('part_b_submitted', true)
+            ->count();
         
         return view('dashboard', [
             'activeTab' => 'questions',
@@ -63,10 +66,16 @@ class AuthController extends Controller
 
     public function responses()
     {
-        $responsesCount = TrainingNeedsAssessment::count();
+        // Only count responses that have both Part A and Part B completed
+        $responsesCount = TrainingNeedsAssessment::where('part_a_submitted', true)
+            ->where('part_b_submitted', true)
+            ->count();
         
         // Order by: unread first (read_by is null or not current user), then by latest
+        // Only fetch responses that have both Part A and Part B completed
         $responses = TrainingNeedsAssessment::with('readByUser')
+            ->where('part_a_submitted', true)
+            ->where('part_b_submitted', true)
             ->orderByRaw('CASE 
                 WHEN read_by IS NULL THEN 0 
                 WHEN read_by != ? THEN 0 
@@ -84,12 +93,19 @@ class AuthController extends Controller
 
     public function report()
     {
-        $responsesCount = TrainingNeedsAssessment::count();
-        $unreadCount = TrainingNeedsAssessment::where(function($query) {
-            $query->whereNull('read_by')
-                  ->orWhere('read_by', '!=', Auth::id());
-        })->count();
-        $allResponses = TrainingNeedsAssessment::all();
+        // Only analyze responses that have both Part A and Part B completed
+        $responsesCount = TrainingNeedsAssessment::where('part_a_submitted', true)
+            ->where('part_b_submitted', true)
+            ->count();
+        $unreadCount = TrainingNeedsAssessment::where('part_a_submitted', true)
+            ->where('part_b_submitted', true)
+            ->where(function($query) {
+                $query->whereNull('read_by')
+                      ->orWhere('read_by', '!=', Auth::id());
+            })->count();
+        $allResponses = TrainingNeedsAssessment::where('part_a_submitted', true)
+            ->where('part_b_submitted', true)
+            ->get();
         
         // Gender statistics (normalize to title case)
         $genderStats = [];
@@ -495,7 +511,10 @@ class AuthController extends Controller
     public function filterByGender($gender)
     {
         $normalizedGender = ucfirst(strtolower(urldecode($gender)));
-        $responses = TrainingNeedsAssessment::where('gender', $normalizedGender)
+        // Only filter responses that have both Part A and Part B completed
+        $responses = TrainingNeedsAssessment::where('part_a_submitted', true)
+            ->where('part_b_submitted', true)
+            ->where('gender', $normalizedGender)
             ->latest()
             ->paginate(10);
         
@@ -511,8 +530,11 @@ class AuthController extends Controller
         $range = urldecode($range);
         list($minAge, $maxAge) = explode('-', $range);
         
+        // Only filter responses that have both Part A and Part B completed
         // Ensure we get all ages in the range inclusively
-        $responses = TrainingNeedsAssessment::where('age', '>=', (int)$minAge)
+        $responses = TrainingNeedsAssessment::where('part_a_submitted', true)
+            ->where('part_b_submitted', true)
+            ->where('age', '>=', (int)$minAge)
             ->where('age', '<=', (int)$maxAge)
             ->latest()
             ->paginate(10);
@@ -527,7 +549,10 @@ class AuthController extends Controller
     public function filterByWorkstation($workstation)
     {
         $workstation = urldecode($workstation);
-        $responses = TrainingNeedsAssessment::where('work_station', $workstation)
+        // Only filter responses that have both Part A and Part B completed
+        $responses = TrainingNeedsAssessment::where('part_a_submitted', true)
+            ->where('part_b_submitted', true)
+            ->where('work_station', $workstation)
             ->latest()
             ->paginate(10);
         
@@ -541,7 +566,10 @@ class AuthController extends Controller
     public function filterBySupervisor($supervisor)
     {
         $supervisor = urldecode($supervisor);
-        $responses = TrainingNeedsAssessment::where('immediate_supervisor_name', $supervisor)
+        // Only filter responses that have both Part A and Part B completed
+        $responses = TrainingNeedsAssessment::where('part_a_submitted', true)
+            ->where('part_b_submitted', true)
+            ->where('immediate_supervisor_name', $supervisor)
             ->latest()
             ->paginate(10);
         
@@ -556,8 +584,11 @@ class AuthController extends Controller
     {
         $qualification = urldecode($qualification);
         
+        // Only filter responses that have both Part A and Part B completed
         // Get all responses and filter in PHP for JSON array search
-        $allResponses = TrainingNeedsAssessment::all();
+        $allResponses = TrainingNeedsAssessment::where('part_a_submitted', true)
+            ->where('part_b_submitted', true)
+            ->get();
         $filteredResponses = $allResponses->filter(function($response) use ($qualification) {
             if ($response->qualifications && is_array($response->qualifications)) {
                 foreach ($response->qualifications as $qual) {
@@ -594,8 +625,11 @@ class AuthController extends Controller
     {
         $competency = urldecode($competency);
         
+        // Only filter responses that have both Part A and Part B completed
         // Get all responses and filter in PHP for JSON array search
-        $allResponses = TrainingNeedsAssessment::all();
+        $allResponses = TrainingNeedsAssessment::where('part_a_submitted', true)
+            ->where('part_b_submitted', true)
+            ->get();
         $filteredResponses = $allResponses->filter(function($response) use ($competency) {
             if ($response->competencies && is_array($response->competencies)) {
                 foreach ($response->competencies as $groupKey => $items) {
@@ -650,7 +684,10 @@ class AuthController extends Controller
 
     public function exportReport(Request $request)
     {
-        $allResponses = TrainingNeedsAssessment::all();
+        // Only export responses that have both Part A and Part B completed
+        $allResponses = TrainingNeedsAssessment::where('part_a_submitted', true)
+            ->where('part_b_submitted', true)
+            ->get();
         
         // Get selected columns from query parameter
         $selectedColumns = $request->query('columns');

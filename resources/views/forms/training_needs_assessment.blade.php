@@ -178,6 +178,36 @@
             border-color: #dc2626 !important;
             box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
         }
+        .btn-add-other {
+            background: #2563eb;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: Tahoma, sans-serif;
+            transition: background 0.2s;
+        }
+        .btn-add-other:hover {
+            background: #1d4ed8;
+        }
+        .btn-remove-other {
+            background: #dc2626;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-family: Tahoma, sans-serif;
+            margin-top: 0.25rem;
+            transition: background 0.2s;
+        }
+        .btn-remove-other:hover {
+            background: #b91c1c;
+        }
         @media (max-width: 768px) {
             body {
                 padding: 0.75rem 0.5rem 1.5rem;
@@ -362,47 +392,75 @@
                         ];
                     @endphp
                     @foreach ($qualifications as $key => $label)
-                        <tr>
+                        <tr class="qualification-row" data-qual-key="{{ $key }}">
                             <td>
                                 <label>
-                                    <input type="checkbox" name="qualifications[{{ $key }}][selected]" value="1" class="qualification-checkbox">
+                                    <input type="checkbox" name="qualifications[{{ $key }}][selected]" value="1" class="qualification-checkbox" data-qual-key="{{ $key }}">
                                     {{ $label }}
                                 </label>
+                                @if($key === 'other')
+                                    <div style="margin-top: 0.5rem;">
+                                        <input type="text" name="qualifications[{{ $key }}][specify]" placeholder="Specify qualification" class="qualification-specify" style="width: 100%; padding: 0.4rem 0.45rem; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem;">
+                                    </div>
+                                @endif
                             </td>
                             <td>
                                 <input type="text" name="qualifications[{{ $key }}][award]" placeholder="Award / Institution" class="qualification-award">
                             </td>
                         </tr>
                     @endforeach
+                    <!-- Dynamic "Other" rows will be added here -->
                 </tbody>
             </table>
+            
+            <!-- Add Another "Other" Qualification Button -->
+            <div id="add-other-btn-container" style="margin-top: 0.75rem; display: none;">
+                <button type="button" id="add-other-qualification" class="btn-add-other">
+                    + Add Another "Other" Qualification
+                </button>
+            </div>
 
             <!-- 3.0 Other training attended for the past three years -->
             <div class="section-heading">3.0 Other Training Attended for the Past Three Years</div>
             <p class="note">Start with the most recent ones.</p>
 
-            <table>
+            <table id="past-trainings-table">
                 <thead>
                     <tr>
                         <th style="width: 10%;">S/No</th>
                         <th>Name of the seminar / course</th>
                         <th style="width: 25%;">Date attended</th>
+                        <th style="width: 10%;">Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="past-trainings-tbody">
                     @for ($i = 1; $i <= 5; $i++)
-                        <tr>
-                            <td>{{ $i }}</td>
+                        <tr class="past-training-row">
+                            <td class="row-number">{{ $i }}</td>
                             <td>
-                                <input type="text" name="past_trainings[{{ $i }}][name]">
+                                <input type="text" name="past_trainings[{{ $i }}][name]" class="training-name-input">
                             </td>
                             <td>
-                                <input type="date" name="past_trainings[{{ $i }}][date_attended]">
+                                <input type="date" name="past_trainings[{{ $i }}][date_attended]" class="training-date-input">
+                            </td>
+                            <td>
+                                @if($i > 1)
+                                    <button type="button" class="btn-remove-training" onclick="removeTrainingRow(this)">Remove</button>
+                                @else
+                                    <span style="color: #94a3b8; font-size: 0.75rem;">-</span>
+                                @endif
                             </td>
                         </tr>
                     @endfor
                 </tbody>
             </table>
+            
+            <!-- Add Another Training Button -->
+            <div style="margin-top: 0.75rem;">
+                <button type="button" id="add-training-btn" class="btn-add-other">
+                    + Add Another Training
+                </button>
+            </div>
         </div>
 
         <!-- Second sheet: competencies and training -->
@@ -535,24 +593,39 @@
                 which you think will enable you to improve your performance at HESLB.
             </p>
 
-            <table>
+            <table id="desired-trainings-table">
                 <thead>
                     <tr>
                         <th style="width: 10%;">S/No</th>
                         <th>Training / Course</th>
+                        <th style="width: 10%;">Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="desired-trainings-tbody">
                     @for ($i = 1; $i <= 3; $i++)
-                        <tr>
-                            <td>{{ $i }}</td>
+                        <tr class="desired-training-row">
+                            <td class="row-number">{{ $i }}</td>
                             <td>
-                                <input type="text" name="desired_trainings[{{ $i }}]">
+                                <input type="text" name="desired_trainings[{{ $i }}]" class="desired-training-input">
+                            </td>
+                            <td>
+                                @if($i > 1)
+                                    <button type="button" class="btn-remove-training" onclick="removeDesiredTrainingRow(this)">Remove</button>
+                                @else
+                                    <span style="color: #94a3b8; font-size: 0.75rem;">-</span>
+                                @endif
                             </td>
                         </tr>
                     @endfor
                 </tbody>
             </table>
+            
+            <!-- Add Another Desired Training Button -->
+            <div style="margin-top: 0.75rem;">
+                <button type="button" id="add-desired-training-btn" class="btn-add-other">
+                    + Add Another Training / Course
+                </button>
+            </div>
 
             <!-- 6.0 Training method -->
             <div class="section-heading">6.0 Training Method</div>
@@ -560,16 +633,17 @@
                 Please rate the method of training you feel would be most effective to achieve your training goals.
             </p>
 
-            <table class="rating-table">
+            <table class="rating-table" id="training-methods-table">
                 <thead>
                     <tr>
                         <th style="width: 35%;">Method</th>
                         <th>Not Very Effective</th>
                         <th>Somewhat Effective</th>
                         <th>Very Effective</th>
+                        <th style="width: 10%;">Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="training-methods-tbody">
                     @php
                         $methods = [
                             'classroom' => 'Classroom training',
@@ -585,12 +659,12 @@
                         ];
                     @endphp
                     @foreach ($methods as $key => $label)
-                        <tr>
+                        <tr class="training-method-row" data-method-key="{{ $key }}">
                             <td>
                                 {{ $label }}
                                 @if ($key === 'other')
                                     <br>
-                                    <input type="text" name="training_methods[other_label]" placeholder="Please specify" style="width:100%;margin-top:0.25rem;">
+                                    <input type="text" name="training_methods[other_label]" placeholder="Please specify" class="training-method-other-input" style="width:100%;margin-top:0.25rem;">
                                 @endif
                             </td>
                             @foreach (['not_very', 'somewhat', 'very'] as $rating)
@@ -600,10 +674,24 @@
                                            value="{{ $rating }}">
                                 </td>
                             @endforeach
+                            <td>
+                                @if ($key === 'other')
+                                    <button type="button" class="btn-remove-training" onclick="removeTrainingMethodRow(this)">Remove</button>
+                                @else
+                                    <span style="color: #94a3b8; font-size: 0.75rem;">-</span>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+            
+            <!-- Add Another "Other" Training Method Button -->
+            <div style="margin-top: 0.75rem;">
+                <button type="button" id="add-other-method-btn" class="btn-add-other">
+                    + Add Another "Other" Training Method
+                </button>
+            </div>
 
             <!-- 7.0 Other comments -->
             <div class="section-heading">7.0 Other Comments</div>
@@ -726,12 +814,72 @@
                 }
             }
 
-            // Real-time validation for qualifications
-            document.querySelectorAll('.qualification-checkbox').forEach(function(checkbox) {
+            // Counter for dynamic "Other" qualifications
+            let otherQualCounter = 0;
+
+            // Function to add a new "Other" qualification row
+            function addOtherQualificationRow() {
+                otherQualCounter++;
+                const table = document.querySelector('table tbody');
+                const newRow = document.createElement('tr');
+                newRow.className = 'qualification-row other-qual-row';
+                newRow.setAttribute('data-qual-key', `other_${otherQualCounter}`);
+                
+                newRow.innerHTML = `
+                    <td>
+                        <label>
+                            <input type="checkbox" name="qualifications[other_${otherQualCounter}][selected]" value="1" class="qualification-checkbox" data-qual-key="other_${otherQualCounter}" checked>
+                            Other (specify)
+                        </label>
+                        <div style="margin-top: 0.5rem;">
+                            <input type="text" name="qualifications[other_${otherQualCounter}][specify]" placeholder="Specify qualification" class="qualification-specify" required style="width: 100%; padding: 0.4rem 0.45rem; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem;">
+                        </div>
+                    </td>
+                    <td style="position: relative;">
+                        <input type="text" name="qualifications[other_${otherQualCounter}][award]" placeholder="Award / Institution" class="qualification-award" required>
+                        <button type="button" class="btn-remove-other" onclick="removeOtherQualification(this)">Remove</button>
+                    </td>
+                `;
+                
+                // Insert before the closing tbody tag (or at the end)
+                table.appendChild(newRow);
+                
+                // Attach validation to the new checkbox
+                const newCheckbox = newRow.querySelector('.qualification-checkbox');
+                attachQualificationValidation(newCheckbox);
+            }
+
+            // Function to remove an "Other" qualification row
+            window.removeOtherQualification = function(btn) {
+                const row = btn.closest('tr');
+                if (row) {
+                    row.remove();
+                    // If no more "Other" rows exist, hide the add button if "other" checkbox is unchecked
+                    checkOtherQualificationState();
+                }
+            };
+
+            // Function to check if "other" checkbox is checked and show/hide add button
+            function checkOtherQualificationState() {
+                const otherCheckbox = document.querySelector('input[name="qualifications[other][selected]"]');
+                const addBtnContainer = document.getElementById('add-other-btn-container');
+                const otherRows = document.querySelectorAll('.other-qual-row');
+                
+                if (otherCheckbox && otherCheckbox.checked) {
+                    addBtnContainer.style.display = 'block';
+                } else if (otherRows.length === 0) {
+                    // Only hide if no dynamic rows exist
+                    addBtnContainer.style.display = 'none';
+                }
+            }
+
+            // Function to attach validation to qualification checkbox
+            function attachQualificationValidation(checkbox) {
                 checkbox.addEventListener('change', function() {
                     const nameAttr = this.getAttribute('name');
                     const key = nameAttr.match(/qualifications\[([^\]]+)\]/)[1];
                     const awardInput = document.querySelector(`input[name="qualifications[${key}][award]"]`);
+                    const specifyInput = document.querySelector(`input[name="qualifications[${key}][specify]"]`);
                     
                     if (this.checked) {
                         if (awardInput) {
@@ -740,6 +888,21 @@
                             const error = awardInput.parentElement.querySelector('.field-error');
                             if (error) error.remove();
                         }
+                        
+                        // If it's an "other" qualification, require specify field
+                        if (key === 'other' || key.startsWith('other_')) {
+                            if (specifyInput) {
+                                specifyInput.setAttribute('required', 'required');
+                                specifyInput.classList.remove('error-highlight');
+                                const error = specifyInput.parentElement.querySelector('.field-error');
+                                if (error) error.remove();
+                            }
+                        }
+                        
+                        // If it's the main "other" checkbox, show add button
+                        if (key === 'other') {
+                            checkOtherQualificationState();
+                        }
                     } else {
                         if (awardInput) {
                             awardInput.removeAttribute('required');
@@ -747,9 +910,226 @@
                             const error = awardInput.parentElement.querySelector('.field-error');
                             if (error) error.remove();
                         }
+                        
+                        if (specifyInput) {
+                            specifyInput.removeAttribute('required');
+                            specifyInput.classList.remove('error-highlight');
+                            const error = specifyInput.parentElement.querySelector('.field-error');
+                            if (error) error.remove();
+                        }
+                        
+                        // If it's the main "other" checkbox, hide add button if no dynamic rows
+                        if (key === 'other') {
+                            const otherRows = document.querySelectorAll('.other-qual-row');
+                            if (otherRows.length === 0) {
+                                document.getElementById('add-other-btn-container').style.display = 'none';
+                            }
+                        }
                     }
                 });
+            }
+
+            // Attach validation to all existing qualification checkboxes
+            document.querySelectorAll('.qualification-checkbox').forEach(function(checkbox) {
+                attachQualificationValidation(checkbox);
             });
+
+            // Add button click handler
+            const addOtherBtn = document.getElementById('add-other-qualification');
+            if (addOtherBtn) {
+                addOtherBtn.addEventListener('click', function() {
+                    addOtherQualificationRow();
+                });
+            }
+
+            // Initialize button visibility on page load
+            checkOtherQualificationState();
+
+            // Past Trainings - Add Another functionality
+            // Initialize counter based on existing rows
+            const existingTrainingRows = document.querySelectorAll('#past-trainings-tbody .past-training-row');
+            let trainingCounter = existingTrainingRows.length;
+
+            // Function to update row numbers
+            function updateTrainingRowNumbers() {
+                const rows = document.querySelectorAll('#past-trainings-tbody .past-training-row');
+                rows.forEach((row, index) => {
+                    const rowNumberCell = row.querySelector('.row-number');
+                    if (rowNumberCell) {
+                        rowNumberCell.textContent = index + 1;
+                    }
+                });
+            }
+
+            // Function to add a new training row
+            window.addTrainingRow = function() {
+                trainingCounter++;
+                const tbody = document.getElementById('past-trainings-tbody');
+                const newRow = document.createElement('tr');
+                newRow.className = 'past-training-row';
+                
+                newRow.innerHTML = `
+                    <td class="row-number">${trainingCounter}</td>
+                    <td>
+                        <input type="text" name="past_trainings[${trainingCounter}][name]" class="training-name-input">
+                    </td>
+                    <td>
+                        <input type="date" name="past_trainings[${trainingCounter}][date_attended]" class="training-date-input">
+                    </td>
+                    <td>
+                        <button type="button" class="btn-remove-training" onclick="removeTrainingRow(this)">Remove</button>
+                    </td>
+                `;
+                
+                tbody.appendChild(newRow);
+                updateTrainingRowNumbers();
+            };
+
+            // Function to remove a training row
+            window.removeTrainingRow = function(btn) {
+                const row = btn.closest('tr');
+                if (row) {
+                    const rows = document.querySelectorAll('#past-trainings-tbody .past-training-row');
+                    // Don't allow removing if only one row remains
+                    if (rows.length > 1) {
+                        row.remove();
+                        updateTrainingRowNumbers();
+                    } else {
+                        alert('At least one training entry is required.');
+                    }
+                }
+            };
+
+            // Add button click handler for training
+            const addTrainingBtn = document.getElementById('add-training-btn');
+            if (addTrainingBtn) {
+                addTrainingBtn.addEventListener('click', function() {
+                    addTrainingRow();
+                });
+            }
+
+            // Desired Trainings - Add Another functionality
+            // Initialize counter based on existing rows
+            const existingDesiredTrainingRows = document.querySelectorAll('#desired-trainings-tbody .desired-training-row');
+            let desiredTrainingCounter = existingDesiredTrainingRows.length;
+
+            // Function to update row numbers for desired trainings
+            function updateDesiredTrainingRowNumbers() {
+                const rows = document.querySelectorAll('#desired-trainings-tbody .desired-training-row');
+                rows.forEach((row, index) => {
+                    const rowNumberCell = row.querySelector('.row-number');
+                    if (rowNumberCell) {
+                        rowNumberCell.textContent = index + 1;
+                    }
+                });
+            }
+
+            // Function to add a new desired training row
+            window.addDesiredTrainingRow = function() {
+                desiredTrainingCounter++;
+                const tbody = document.getElementById('desired-trainings-tbody');
+                const newRow = document.createElement('tr');
+                newRow.className = 'desired-training-row';
+                
+                newRow.innerHTML = `
+                    <td class="row-number">${desiredTrainingCounter}</td>
+                    <td>
+                        <input type="text" name="desired_trainings[${desiredTrainingCounter}]" class="desired-training-input">
+                    </td>
+                    <td>
+                        <button type="button" class="btn-remove-training" onclick="removeDesiredTrainingRow(this)">Remove</button>
+                    </td>
+                `;
+                
+                tbody.appendChild(newRow);
+                updateDesiredTrainingRowNumbers();
+            };
+
+            // Function to remove a desired training row
+            window.removeDesiredTrainingRow = function(btn) {
+                const row = btn.closest('tr');
+                if (row) {
+                    const rows = document.querySelectorAll('#desired-trainings-tbody .desired-training-row');
+                    // Don't allow removing if only one row remains
+                    if (rows.length > 1) {
+                        row.remove();
+                        updateDesiredTrainingRowNumbers();
+                    } else {
+                        alert('At least one training / course entry is required.');
+                    }
+                }
+            };
+
+            // Add button click handler for desired training
+            const addDesiredTrainingBtn = document.getElementById('add-desired-training-btn');
+            if (addDesiredTrainingBtn) {
+                addDesiredTrainingBtn.addEventListener('click', function() {
+                    addDesiredTrainingRow();
+                });
+            }
+
+            // Training Methods - Add Another "Other" functionality
+            let otherMethodCounter = 0;
+
+            // Function to add a new "Other" training method row
+            window.addOtherTrainingMethodRow = function() {
+                otherMethodCounter++;
+                const tbody = document.getElementById('training-methods-tbody');
+                const newRow = document.createElement('tr');
+                newRow.className = 'training-method-row other-method-row';
+                newRow.setAttribute('data-method-key', `other_${otherMethodCounter}`);
+                
+                newRow.innerHTML = `
+                    <td>
+                        Other (specify)
+                        <br>
+                        <input type="text" name="training_methods[other_${otherMethodCounter}_label]" placeholder="Please specify" class="training-method-other-input" style="width:100%;margin-top:0.25rem;">
+                    </td>
+                    <td>
+                        <input type="radio" name="training_methods[other_${otherMethodCounter}]" value="not_very">
+                    </td>
+                    <td>
+                        <input type="radio" name="training_methods[other_${otherMethodCounter}]" value="somewhat">
+                    </td>
+                    <td>
+                        <input type="radio" name="training_methods[other_${otherMethodCounter}]" value="very">
+                    </td>
+                    <td>
+                        <button type="button" class="btn-remove-training" onclick="removeTrainingMethodRow(this)">Remove</button>
+                    </td>
+                `;
+                
+                tbody.appendChild(newRow);
+            };
+
+            // Function to remove an "Other" training method row
+            window.removeTrainingMethodRow = function(btn) {
+                const row = btn.closest('tr');
+                if (row) {
+                    // Check if it's a dynamic row (other_*) or the original "other" row
+                    const methodKey = row.getAttribute('data-method-key');
+                    if (methodKey && methodKey.startsWith('other_')) {
+                        // It's a dynamic row, safe to remove
+                        row.remove();
+                    } else if (methodKey === 'other') {
+                        // It's the original "other" row - check if there are other "other" rows
+                        const allOtherRows = document.querySelectorAll('.other-method-row, tr[data-method-key="other"]');
+                        if (allOtherRows.length > 1) {
+                            row.remove();
+                        } else {
+                            alert('At least one "Other" training method entry is required.');
+                        }
+                    }
+                }
+            };
+
+            // Add button click handler for other training method
+            const addOtherMethodBtn = document.getElementById('add-other-method-btn');
+            if (addOtherMethodBtn) {
+                addOtherMethodBtn.addEventListener('click', function() {
+                    addOtherTrainingMethodRow();
+                });
+            }
 
             // Form submission validation
             form.addEventListener('submit', function(e) {
@@ -812,9 +1192,17 @@
                         const nameAttr = checkbox.getAttribute('name');
                         const key = nameAttr.match(/qualifications\[([^\]]+)\]/)[1];
                         const awardInput = document.querySelector(`input[name="qualifications[${key}][award]"]`);
+                        const specifyInput = document.querySelector(`input[name="qualifications[${key}][specify]"]`);
                         
+                        // Validate award/institution (required for all)
                         if (!awardInput || !awardInput.value || awardInput.value.trim() === '' || awardInput.value.trim() === 'Award / Institution') {
                             showError(`qualifications[${key}][award]`, 'Award and Institution is required for selected qualification.');
+                            isValid = false;
+                        }
+                        
+                        // Validate specify field (required only for "other" qualifications)
+                        if ((key === 'other' || key.startsWith('other_')) && (!specifyInput || !specifyInput.value || specifyInput.value.trim() === '')) {
+                            showError(`qualifications[${key}][specify]`, 'Please specify the qualification name.');
                             isValid = false;
                         }
                     }
@@ -824,6 +1212,9 @@
                     showError('qualifications', 'Please select at least one qualification.');
                     isValid = false;
                 }
+                
+                // Check if "other" checkbox is checked to show add button
+                checkOtherQualificationState();
 
                 // Validate Supervisor Email
                 const supervisorEmail = document.querySelector('input[name="supervisor_email"]');

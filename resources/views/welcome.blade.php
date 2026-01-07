@@ -252,10 +252,10 @@
                 <p>Analyze and review all submissions</p>
             </a>
 
-        </div>
+                </div>
 
-    </div>
-</main>
+                </div>
+            </main>
 
     <script>
         function copySupervisorLink(btn) {

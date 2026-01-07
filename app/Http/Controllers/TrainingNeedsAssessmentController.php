@@ -64,8 +64,15 @@ class TrainingNeedsAssessmentController extends Controller
             if (isset($qual['selected']) && $qual['selected'] == 1) {
                 $hasQualification = true;
                 // If qualification is selected, award must be filled
-                if (empty($qual['award']) || trim($qual['award']) === '') {
+                if (empty($qual['award']) || trim($qual['award']) === '' || trim($qual['award']) === 'Award / Institution') {
                     $qualificationErrors[] = "Award and Institution is required for the selected qualification.";
+                }
+                
+                // If it's an "other" qualification, specify field must be filled
+                if ($key === 'other' || str_starts_with($key, 'other_')) {
+                    if (empty($qual['specify']) || trim($qual['specify']) === '') {
+                        $qualificationErrors[] = "Please specify the qualification name for 'Other' qualification.";
+                    }
                 }
             }
         }
@@ -81,6 +88,29 @@ class TrainingNeedsAssessmentController extends Controller
                 ->withInput()
                 ->withErrors(['qualifications' => implode(' ', $qualificationErrors)]);
         }
+
+        // Clean up qualifications: remove unchecked ones and empty entries
+        $cleanedQualifications = [];
+        foreach ($qualifications as $key => $qual) {
+            if (isset($qual['selected']) && $qual['selected'] == 1) {
+                if (!empty($qual['award']) && trim($qual['award']) !== '' && trim($qual['award']) !== 'Award / Institution') {
+                    $cleanedQual = [
+                        'selected' => 1,
+                        'award' => trim($qual['award'])
+                    ];
+                    
+                    // Add specify field for "other" qualifications (required)
+                    if ($key === 'other' || str_starts_with($key, 'other_')) {
+                        if (!empty($qual['specify'])) {
+                            $cleanedQual['specify'] = trim($qual['specify']);
+                        }
+                    }
+                    
+                    $cleanedQualifications[$key] = $cleanedQual;
+                }
+            }
+        }
+        $data['qualifications'] = $cleanedQualifications;
 
         // Store Part A data
         $partAData = $data;
