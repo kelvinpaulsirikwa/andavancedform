@@ -262,18 +262,41 @@
     <script>
         function copySupervisorLink(btn) {
             const link = btn.getAttribute('data-link');
-            navigator.clipboard.writeText(link).then(function() {
-                const originalText = btn.textContent;
+            const originalText = btn.textContent;
+            const reset = () => {
+                btn.textContent = originalText;
+                btn.style.background = '#10b981';
+            };
+
+            const onSuccess = () => {
                 btn.textContent = 'Copied!';
                 btn.style.background = '#059669';
-                
-                setTimeout(function() {
-                    btn.textContent = originalText;
-                    btn.style.background = '#10b981';
-                }, 2000);
-            }).catch(function(err) {
-                alert('Failed to copy link. Please copy manually.');
-            });
+                setTimeout(reset, 2000);
+            };
+
+            const onFail = () => {
+                // Fallback for browsers without navigator.clipboard (e.g., insecure http)
+                const textarea = document.createElement('textarea');
+                textarea.value = link;
+                textarea.style.position = 'fixed';
+                textarea.style.left = '-9999px';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    onSuccess();
+                } catch (err) {
+                    alert('Failed to copy link. Please copy manually.');
+                    reset();
+                }
+                document.body.removeChild(textarea);
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(link).then(onSuccess).catch(onFail);
+            } else {
+                onFail();
+            }
         }
     </script>
     </body>
