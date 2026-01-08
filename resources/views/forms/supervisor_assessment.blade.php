@@ -419,7 +419,8 @@
                 </div>
                 <div class="field">
                     <label class="small-label" for="supervisor_date">Date</label>
-                    <input id="supervisor_date" type="date" name="supervisor_date" value="{{ old('supervisor_date', $assessment->supervisor_date ? \Carbon\Carbon::parse($assessment->supervisor_date)->format('Y-m-d') : '') }}" required>
+                    <input id="supervisor_date" type="text" value="{{ date('d/m/Y') }}" readonly style="background-color: #f3f4f6; cursor: not-allowed;">
+                    <input type="hidden" name="supervisor_date" value="{{ date('Y-m-d') }}">
                 </div>
             </div>
 
