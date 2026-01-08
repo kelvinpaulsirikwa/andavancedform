@@ -302,16 +302,8 @@
                             <span>Supervisor Name</span>
                         </label>
                         <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-family: Tahoma, sans-serif;">
-                            <input type="checkbox" class="column-checkbox" value="supervisor_signature" checked>
-                            <span>Supervisor Signature</span>
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-family: Tahoma, sans-serif;">
                             <input type="checkbox" class="column-checkbox" value="supervisor_date" checked>
                             <span>Supervisor Date</span>
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-family: Tahoma, sans-serif;">
-                            <input type="checkbox" class="column-checkbox" value="created_at" checked>
-                            <span>Created At</span>
                         </label>
                     </div>
                     <div style="display: flex; gap: 0.75rem;">

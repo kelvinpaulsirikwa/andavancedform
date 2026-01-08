@@ -653,9 +653,7 @@ class DashboardController extends Controller
             'supervisor_performance_comment' => 'Supervisor Performance Comment',
             'supervisor_training_suggestions' => 'Supervisor Training Suggestions',
             'supervisor_name' => 'Supervisor Name',
-            'supervisor_signature' => 'Supervisor Signature',
             'supervisor_date' => 'Supervisor Date',
-            'created_at' => 'Created At',
         ];
 
         if ($columns) {
@@ -798,18 +796,10 @@ class DashboardController extends Controller
                         case 'supervisor_name':
                             $rowData[] = $response->supervisor_name ?? '';
                             break;
-                        case 'supervisor_signature':
-                            $rowData[] = $response->supervisor_signature ?? '';
-                            break;
                         case 'supervisor_date':
                             $rowData[] = $response->supervisor_date instanceof \DateTimeInterface
                                 ? $response->supervisor_date->format('Y-m-d')
                                 : ($response->supervisor_date ?? '');
-                            break;
-                        case 'created_at':
-                            $rowData[] = $response->created_at instanceof \DateTimeInterface
-                                ? $response->created_at->format('Y-m-d H:i:s')
-                                : ($response->created_at ?? '');
                             break;
                         default:
                             $rowData[] = '';
