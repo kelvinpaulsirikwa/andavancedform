@@ -235,6 +235,109 @@
             th, td {
                 padding: 0.3rem 0.35rem;
             }
+            /* Make past trainings table responsive */
+            #past-trainings-table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            #past-trainings-table thead {
+                display: none;
+            }
+            #past-trainings-table tbody {
+                display: block;
+            }
+            #past-trainings-table tr {
+                display: block;
+                border: 1px solid #cbd5e1;
+                border-radius: 6px;
+                margin-bottom: 0.75rem;
+                padding: 0.75rem;
+                background: #f8fafc;
+            }
+            #past-trainings-table td {
+                display: block;
+                border: none;
+                padding: 0.5rem 0;
+                text-align: left;
+            }
+            #past-trainings-table td:before {
+                content: attr(data-label);
+                font-weight: 600;
+                display: block;
+                margin-bottom: 0.25rem;
+                color: #475569;
+                font-size: 0.8rem;
+            }
+            #past-trainings-table input[type="text"],
+            #past-trainings-table input[type="date"] {
+                width: 100%;
+                font-size: 0.85rem;
+                padding: 0.5rem;
+            }
+            #past-trainings-table .btn-remove-training {
+                width: 100%;
+                padding: 0.5rem;
+                font-size: 0.85rem;
+                margin-top: 0.25rem;
+            }
+            /* Make training methods table responsive */
+            #training-methods-table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            #training-methods-table thead {
+                display: none;
+            }
+            #training-methods-table tbody {
+                display: block;
+            }
+            #training-methods-table tr {
+                display: block;
+                border: 1px solid #cbd5e1;
+                border-radius: 6px;
+                margin-bottom: 0.75rem;
+                padding: 0.75rem;
+                background: #f8fafc;
+            }
+            #training-methods-table td {
+                display: block;
+                border: none;
+                padding: 0.5rem 0;
+                text-align: left;
+            }
+            #training-methods-table td:first-child {
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid #e2e8f0;
+            }
+            #training-methods-table td:before {
+                content: attr(data-label);
+                font-weight: 600;
+                display: block;
+                margin-bottom: 0.25rem;
+                color: #475569;
+                font-size: 0.8rem;
+            }
+            #training-methods-table td:first-child:before {
+                content: "Method: ";
+            }
+            #training-methods-table input[type="radio"] {
+                margin-right: 0.5rem;
+            }
+            #training-methods-table .training-method-other-input {
+                width: 100%;
+                font-size: 0.85rem;
+                padding: 0.5rem;
+            }
+            #training-methods-table .btn-remove-training {
+                width: 100%;
+                padding: 0.5rem;
+                font-size: 0.85rem;
+                margin-top: 0.5rem;
+            }
         }
     </style>
 </head>
@@ -437,14 +540,14 @@
                 <tbody id="past-trainings-tbody">
                     @for ($i = 1; $i <= 5; $i++)
                         <tr class="past-training-row">
-                            <td class="row-number">{{ $i }}</td>
-                            <td>
+                            <td class="row-number" data-label="S/No">{{ $i }}</td>
+                            <td data-label="Name of the seminar / course">
                                 <input type="text" name="past_trainings[{{ $i }}][name]" class="training-name-input">
                             </td>
-                            <td>
+                            <td data-label="Date attended">
                                 <input type="date" name="past_trainings[{{ $i }}][date_attended]" class="training-date-input">
                             </td>
-                            <td>
+                            <td data-label="Action">
                                 @if($i > 1)
                                     <button type="button" class="btn-remove-training" onclick="removeTrainingRow(this)">Remove</button>
                                 @else
@@ -641,7 +744,6 @@
                         <th>Not Very Effective</th>
                         <th>Somewhat Effective</th>
                         <th>Very Effective</th>
-                        <th style="width: 10%;">Action</th>
                     </tr>
                 </thead>
                 <tbody id="training-methods-tbody">
@@ -661,27 +763,21 @@
                     @endphp
                     @foreach ($methods as $key => $label)
                         <tr class="training-method-row" data-method-key="{{ $key }}">
-                            <td>
+                            <td data-label="Method">
                                 {{ $label }}
                                 @if ($key === 'other')
                                     <br>
                                     <input type="text" name="training_methods[other_label]" placeholder="Please specify" class="training-method-other-input" style="width:100%;margin-top:0.25rem;">
+                                    <button type="button" class="btn-remove-training" onclick="removeTrainingMethodRow(this)" style="margin-top:0.5rem; width:100%;">Remove</button>
                                 @endif
                             </td>
                             @foreach (['not_very', 'somewhat', 'very'] as $rating)
-                                <td>
+                                <td data-label="{{ ucfirst(str_replace('_', ' ', $rating)) }} Effective">
                                     <input type="radio"
                                            name="training_methods[{{ $key }}]"
                                            value="{{ $rating }}">
                                 </td>
                             @endforeach
-                            <td>
-                                @if ($key === 'other')
-                                    <button type="button" class="btn-remove-training" onclick="removeTrainingMethodRow(this)">Remove</button>
-                                @else
-                                    <span style="color: #94a3b8; font-size: 0.75rem;">-</span>
-                                @endif
-                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -987,6 +1083,7 @@
                 rows.forEach((row, index) => {
                     const rowNumberCell = row.querySelector('.row-number');
                     if (rowNumberCell) {
+                        rowNumberCell.setAttribute('data-label', 'S/No');
                         rowNumberCell.textContent = index + 1;
                     }
                 });
@@ -1000,14 +1097,14 @@
                 newRow.className = 'past-training-row';
                 
                 newRow.innerHTML = `
-                    <td class="row-number">${trainingCounter}</td>
-                    <td>
+                    <td class="row-number" data-label="S/No">${trainingCounter}</td>
+                    <td data-label="Name of the seminar / course">
                         <input type="text" name="past_trainings[${trainingCounter}][name]" class="training-name-input">
                     </td>
-                    <td>
+                    <td data-label="Date attended">
                         <input type="date" name="past_trainings[${trainingCounter}][date_attended]" class="training-date-input">
                     </td>
-                    <td>
+                    <td data-label="Action">
                         <button type="button" class="btn-remove-training" onclick="removeTrainingRow(this)">Remove</button>
                     </td>
                 `;
@@ -1111,22 +1208,20 @@
                 newRow.setAttribute('data-method-key', `other_${otherMethodCounter}`);
                 
                 newRow.innerHTML = `
-                    <td>
+                    <td data-label="Method">
                         Other (specify)
                         <br>
                         <input type="text" name="training_methods[other_${otherMethodCounter}_label]" placeholder="Please specify" class="training-method-other-input" style="width:100%;margin-top:0.25rem;">
+                        <button type="button" class="btn-remove-training" onclick="removeTrainingMethodRow(this)" style="margin-top:0.5rem; width:100%;">Remove</button>
                     </td>
-                    <td>
+                    <td data-label="Not Very Effective">
                         <input type="radio" name="training_methods[other_${otherMethodCounter}]" value="not_very">
                     </td>
-                    <td>
+                    <td data-label="Somewhat Effective">
                         <input type="radio" name="training_methods[other_${otherMethodCounter}]" value="somewhat">
                     </td>
-                    <td>
+                    <td data-label="Very Effective">
                         <input type="radio" name="training_methods[other_${otherMethodCounter}]" value="very">
-                    </td>
-                    <td>
-                        <button type="button" class="btn-remove-training" onclick="removeTrainingMethodRow(this)">Remove</button>
                     </td>
                 `;
                 
