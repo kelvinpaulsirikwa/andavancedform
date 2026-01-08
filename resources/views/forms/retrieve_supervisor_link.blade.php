@@ -183,7 +183,7 @@
         </div>
         
         <h1>Supervisor Link</h1>
-        <p class="subtitle">Get your supervisor access link</p>
+        <p class="subtitle">Get your supervisor access link if loss or any error</p>
 
         @if(session('error'))
             <div class="alert alert-error">

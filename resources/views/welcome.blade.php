@@ -245,8 +245,7 @@
             <a href="{{ route('training.retrieve.link') }}" class="icon-card">
                 <div class="icon">🔗</div>
                 <h3>Supervisor Link</h3>
-                <p>Get your supervisor access link</p>
-            </a>
+                <p>Get your supervisor access link if loss or any error</p>            </a>
 
             <a href="{{ route('login') }}" class="icon-card">
                 <div class="icon">📊</div>

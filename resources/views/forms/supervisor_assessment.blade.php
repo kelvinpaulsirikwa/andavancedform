@@ -381,19 +381,32 @@
                     <tr>
                         <th style="width: 10%;">S/No</th>
                         <th>Training / Course</th>
+                        <th style="width: 10%;"></th>
                     </tr>
                 </thead>
-                <tbody>
-                    @for ($i = 1; $i <= 3; $i++)
-                        <tr>
-                            <td>{{ $i }}</td>
+                <tbody id="training-suggestions-tbody">
+                    @php
+                        $existingSuggestions = old('supervisor_training_suggestions', $assessment->supervisor_training_suggestions ?? []);
+                        $suggestionCount = max(3, count($existingSuggestions));
+                    @endphp
+                    @for ($i = 1; $i <= $suggestionCount; $i++)
+                        <tr class="training-suggestion-row">
+                            <td class="row-number">{{ $i }}</td>
                             <td>
-                                <input type="text" name="supervisor_training_suggestions[{{ $i }}]" value="{{ old("supervisor_training_suggestions.$i", $assessment->supervisor_training_suggestions[$i] ?? '') }}" required>
+                                <input type="text" name="supervisor_training_suggestions[{{ $i }}]" value="{{ $existingSuggestions[$i] ?? '' }}" required>
+                            </td>
+                            <td>
+                                @if($i > 3)
+                                    <button type="button" class="btn-remove-training" onclick="removeTrainingSuggestionRow(this)" style="padding: 0.4rem 0.75rem; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-family: Tahoma, sans-serif;">Remove</button>
+                                @endif
                             </td>
                         </tr>
                     @endfor
                 </tbody>
             </table>
+            <div style="margin-top: 0.75rem;">
+                <button type="button" id="add-training-suggestion" onclick="addTrainingSuggestionRow()" style="padding: 0.6rem 1.25rem; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 500; font-family: Tahoma, sans-serif;">+ Add Another</button>
+            </div>
 
             <div class="signature-row" style="margin-top:0.9rem;">
                 <div class="field">
@@ -415,6 +428,63 @@
             </div>
         </div>
     </form>
+
+    <script>
+        // Training Suggestions - Add Another functionality
+        let trainingSuggestionCounter = {{ $suggestionCount }};
+
+        // Function to update row numbers
+        function updateTrainingSuggestionRowNumbers() {
+            const rows = document.querySelectorAll('#training-suggestions-tbody .training-suggestion-row');
+            rows.forEach((row, index) => {
+                const rowNumberCell = row.querySelector('.row-number');
+                if (rowNumberCell) {
+                    rowNumberCell.textContent = index + 1;
+                }
+            });
+        }
+
+        // Function to add a new training suggestion row
+        function addTrainingSuggestionRow() {
+            trainingSuggestionCounter++;
+            const tbody = document.getElementById('training-suggestions-tbody');
+            const newRow = document.createElement('tr');
+            newRow.className = 'training-suggestion-row';
+            
+            newRow.innerHTML = `
+                <td class="row-number">${trainingSuggestionCounter}</td>
+                <td>
+                    <input type="text" name="supervisor_training_suggestions[${trainingSuggestionCounter}]" required>
+                </td>
+                <td>
+                    <button type="button" class="btn-remove-training" onclick="removeTrainingSuggestionRow(this)" style="padding: 0.4rem 0.75rem; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-family: Tahoma, sans-serif;">Remove</button>
+                </td>
+            `;
+            
+            tbody.appendChild(newRow);
+            updateTrainingSuggestionRowNumbers();
+        }
+
+        // Function to remove a training suggestion row
+        function removeTrainingSuggestionRow(btn) {
+            const row = btn.closest('tr');
+            if (row) {
+                const rows = document.querySelectorAll('#training-suggestions-tbody .training-suggestion-row');
+                // Don't allow removing if only 3 rows remain (minimum required)
+                if (rows.length > 3) {
+                    row.remove();
+                    updateTrainingSuggestionRowNumbers();
+                } else {
+                    alert('At least three (3) training suggestions are required.');
+                }
+            }
+        }
+
+        // Initialize row numbers on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTrainingSuggestionRowNumbers();
+        });
+    </script>
 </body>
 </html>
 

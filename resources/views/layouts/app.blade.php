@@ -443,6 +443,40 @@
 
         @stack('scripts')
 
+        <script>
+            function toggleMobileMenu() {
+                const menu = document.getElementById('mobileMenu');
+                const toggle = document.getElementById('mobileMenuToggle');
+                if (menu && toggle) {
+                    menu.classList.toggle('active');
+                    toggle.classList.toggle('active');
+                }
+            }
+            
+            function closeMobileMenu() {
+                const menu = document.getElementById('mobileMenu');
+                const toggle = document.getElementById('mobileMenuToggle');
+                if (menu && toggle) {
+                    menu.classList.remove('active');
+                    toggle.classList.remove('active');
+                }
+            }
+            
+            // Close mobile menu when clicking outside
+            document.addEventListener('DOMContentLoaded', function() {
+                const menu = document.getElementById('mobileMenu');
+                const toggle = document.getElementById('mobileMenuToggle');
+                if (menu && toggle) {
+                    document.addEventListener('click', function(event) {
+                        if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+                            menu.classList.remove('active');
+                            toggle.classList.remove('active');
+                        }
+                    });
+                }
+            });
+        </script>
+
         @auth
 <script>
     (function() {
