@@ -372,7 +372,7 @@
                     <div class="responses-list">
                         @foreach($responses as $response)
                             @php
-                                $isUnread = !$response->read_by || $response->read_by != auth()->id();
+                                $isUnread = !$response->read_by;
                             @endphp
                             <a href="{{ route('dashboard.response', $response->id) }}" style="text-decoration: none; color: inherit;">
                                 <div class="response-item {{ $isUnread ? 'unread' : '' }}" style="cursor: pointer; transition: all 0.2s;">

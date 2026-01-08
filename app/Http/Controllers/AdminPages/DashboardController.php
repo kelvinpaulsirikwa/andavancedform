@@ -36,9 +36,8 @@ class DashboardController extends Controller
             ->where('part_b_submitted', true)
             ->orderByRaw('CASE 
                 WHEN read_by IS NULL THEN 0 
-                WHEN read_by != ? THEN 0 
                 ELSE 1 
-            END', [Auth::id()])
+            END')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -56,10 +55,8 @@ class DashboardController extends Controller
             ->count();
         $unreadCount = TrainingNeedsAssessment::where('part_a_submitted', true)
             ->where('part_b_submitted', true)
-            ->where(function($query) {
-                $query->whereNull('read_by')
-                      ->orWhere('read_by', '!=', Auth::id());
-            })->count();
+            ->whereNull('read_by')
+            ->count();
         $allResponses = TrainingNeedsAssessment::where('part_a_submitted', true)
             ->where('part_b_submitted', true)
             ->get();
@@ -420,26 +417,17 @@ class DashboardController extends Controller
         }
 
         $nextUnreadResponse = TrainingNeedsAssessment::where('id', '>', $id)
-            ->where(function($query) {
-                $query->whereNull('read_by')
-                      ->orWhere('read_by', '!=', Auth::id());
-            })
+            ->whereNull('read_by')
             ->orderBy('id', 'asc')
             ->first();
 
         if (!$nextUnreadResponse) {
-            $nextUnreadResponse = TrainingNeedsAssessment::where(function($query) {
-                $query->whereNull('read_by')
-                      ->orWhere('read_by', '!=', Auth::id());
-            })
-            ->orderBy('id', 'asc')
-            ->first();
+            $nextUnreadResponse = TrainingNeedsAssessment::whereNull('read_by')
+                ->orderBy('id', 'asc')
+                ->first();
         }
 
-        $allRead = TrainingNeedsAssessment::where(function($query) {
-            $query->whereNull('read_by')
-                  ->orWhere('read_by', '!=', Auth::id());
-        })->count() === 0;
+        $allRead = TrainingNeedsAssessment::whereNull('read_by')->count() === 0;
 
         $response->load('readByUser');
 
