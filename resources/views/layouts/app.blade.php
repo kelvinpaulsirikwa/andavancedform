@@ -441,6 +441,8 @@
 
         @yield('content')
 
+        @stack('scripts')
+
         @auth
 <script>
     (function() {
