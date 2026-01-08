@@ -197,15 +197,25 @@ class TrainingNeedsAssessmentController extends Controller
             'supervisor_performance_comment' => ['nullable', 'string'],
             'supervisor_training_suggestions' => ['nullable', 'array'],
             'supervisor_name' => ['nullable', 'string', 'max:150'],
-            'supervisor_signature' => ['nullable', 'string', 'max:150'],
             'supervisor_date' => ['nullable', 'date'],
         ]);
+
+        // Capture tracking information for signature
+        $signatureData = [
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'accept_language' => $request->header('Accept-Language'),
+            'accept_encoding' => $request->header('Accept-Encoding'),
+            'referer' => $request->header('Referer'),
+            'host' => $request->getHost(),
+            'timestamp' => now()->toDateTimeString(),
+        ];
 
         $assessment->update([
             'supervisor_performance_comment' => $data['supervisor_performance_comment'] ?? null,
             'supervisor_training_suggestions' => $data['supervisor_training_suggestions'] ?? null,
             'supervisor_name' => $data['supervisor_name'] ?? null,
-            'supervisor_signature' => $data['supervisor_signature'] ?? null,
+            'supervisor_signature' => json_encode($signatureData), // Store tracking data as JSON
             'supervisor_date' => $data['supervisor_date'] ?? null,
             'part_b_submitted' => true,
         ]);

@@ -414,10 +414,6 @@
                     <input id="supervisor_name" type="text" name="supervisor_name" value="{{ old('supervisor_name', $assessment->supervisor_name ?? '') }}" required>
                 </div>
                 <div class="field">
-                    <label class="small-label" for="supervisor_signature">Signature</label>
-                    <input id="supervisor_signature" type="text" name="supervisor_signature" value="{{ old('supervisor_signature', $assessment->supervisor_signature ?? '') }}" required>
-                </div>
-                <div class="field">
                     <label class="small-label" for="supervisor_date">Date</label>
                     <input id="supervisor_date" type="text" value="{{ date('d/m/Y') }}" readonly style="background-color: #f3f4f6; cursor: not-allowed;">
                     <input type="hidden" name="supervisor_date" value="{{ date('Y-m-d') }}">
