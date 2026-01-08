@@ -64,6 +64,25 @@
         .info-value {
             font-size: 0.9rem;
             color: #1e293b;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-all;
+        }
+        .info-item.signature-item {
+            grid-column: 1 / -1;
+        }
+        .signature-json {
+            background: #f8fafc;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            font-family: monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-height: 300px;
+            overflow-y: auto;
         }
         .list-item {
             padding: 0.5rem 0;
@@ -405,14 +424,29 @@
                         <span class="info-value">{{ $response->supervisor_name ?? 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">Supervisor Signature</span>
-                        <span class="info-value">{{ $response->supervisor_signature ?? 'N/A' }}</span>
-                    </div>
-                    <div class="info-item">
                         <span class="info-label">Date</span>
                         <span class="info-value">
                             {{ $response->supervisor_date ? $response->supervisor_date->format('F d, Y') : 'N/A' }}
                         </span>
+                    </div>
+                    <div class="info-item signature-item">
+                        <span class="info-label">Supervisor Signature (Tracking Data)</span>
+                        @if($response->supervisor_signature)
+                            @php
+                                $signatureData = json_decode($response->supervisor_signature, true);
+                            @endphp
+                            @if($signatureData && is_array($signatureData))
+                                <div class="signature-json">
+                                    @foreach($signatureData as $key => $value)
+                                        <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="signature-json">{{ $response->supervisor_signature }}</div>
+                            @endif
+                        @else
+                            <span class="info-value">N/A</span>
+                        @endif
                     </div>
                 </div>
             </div>
