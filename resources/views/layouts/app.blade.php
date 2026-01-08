@@ -8,6 +8,8 @@
     <meta http-equiv="Expires" content="0">
     <title>@yield('title', config('advancedforms.appname', config('app.name')))</title>
     <link rel="icon" type="image/png" href="{{ asset('images/static_files/heslblogo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/static_files/heslblogo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/static_files/heslblogo.png') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
