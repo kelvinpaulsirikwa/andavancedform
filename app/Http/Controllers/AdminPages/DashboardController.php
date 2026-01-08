@@ -412,7 +412,8 @@ class DashboardController extends Controller
     {
         $response = TrainingNeedsAssessment::findOrFail($id);
 
-        if (Auth::check() && (!$response->read_by || $response->read_by !== Auth::id())) {
+        if (Auth::check() && !$response->read_by) {
+            // Capture the first admin who reads this response
             $response->read_by = Auth::id();
             $response->read_at = now();
             $response->save();
@@ -453,7 +454,8 @@ class DashboardController extends Controller
     {
         $response = TrainingNeedsAssessment::findOrFail($id);
 
-        if (Auth::check()) {
+        if (Auth::check() && !$response->read_by) {
+            // Only set once: preserve the first reader
             $response->read_by = Auth::id();
             $response->read_at = now();
             $response->save();
