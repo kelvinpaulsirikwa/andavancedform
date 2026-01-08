@@ -207,7 +207,8 @@
         </h1>
 
         <p>
-            A simple, advanced form experience designed to streamline your workflow and boost productivity.
+        HESLB is currently undertaking a process to improve its Training Needs Assessment (TNA) and staff training programme in order to align with the Treasury Registrar's directives issued in September 2025.
+
         </p>
 
         @if(session('status'))
