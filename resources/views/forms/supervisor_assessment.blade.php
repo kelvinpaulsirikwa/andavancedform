@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Supervisor Assessment – {{ config('advancedforms.appname', config('app.name')) }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/static_files/heslblogo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/static_files/heslblogo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/static_files/heslblogo.png') }}">
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
